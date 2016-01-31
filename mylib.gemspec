@@ -6,8 +6,13 @@ Gem::Specification.new do |s|
   s.description = "Examples of writing ruby bindings for C/C++ library using SWIG."
   s.authors     = ["Takashi Tamura"]
   s.email       = ''
-  s.files       = ["LICENSE",
-                   "lib/mylib.rb"] + Dir.glob("ext/*/*.cxx") + Dir.glob("ext/*/extconf.rb")
+  s.files       = 
+    ["LICENSE",
+     "lib/mylib.rb"] + 
+    Dir.glob("ext/*/*.cxx") + 
+    Dir.glob("ext/*/*.hpp") +
+    Dir.glob("ext/*/extconf.rb") 
+
   s.extensions  = Dir.glob("ext/*/extconf.rb")
   s.homepage    = 'https://github.com/tamuratak/ruby-swig-example'
   s.license     = 'MIT'
