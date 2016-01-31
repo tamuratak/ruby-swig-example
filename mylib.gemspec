@@ -7,10 +7,8 @@ Gem::Specification.new do |s|
   s.authors     = ["Takashi Tamura"]
   s.email       = ''
   s.files       = ["LICENSE",
-                   "README.md",
-                   "lib/mylib.rb",
-                   "ext/stl/stl_wrap.cxx"] + Dir.glob("ext/eigen/eigen3/**/*")
-  s.extensions  = ["ext/stl/extconf.rb"]
+                   "lib/mylib.rb"] + Dir.glob("ext/*/*.cxx") + Dir.glob("ext/*/extconf.rb")
+  s.extensions  = Dir.glob("ext/*/extconf.rb")
   s.homepage    = 'https://github.com/tamuratak/ruby-swig-example'
   s.license     = 'MIT'
   s.add_runtime_dependency 'rake-compiler', '~> 0.9.5'
