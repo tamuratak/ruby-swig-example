@@ -17,10 +17,12 @@ end
 
 task :swig do  
   Dir::glob("ext/*/*.i"){|f|
-    sh "swig -c++ -ruby #{f}"
+    sh "swig -c++ -ruby -Wall #{f}"
   }
 end
 
 
 desc "Run tests"
 task :default => [:test]
+
+task :build => [:swig, :compile]
