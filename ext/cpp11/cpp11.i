@@ -1,4 +1,4 @@
-%module "mylib::stl"
+%module "mylib::cpp11"
 
 %include std_vector.i
 %include std_string.i
@@ -7,7 +7,7 @@
 
 %{
 
-#include "stl_example.hpp"
+#include "cpp11_example.hpp"
 
 %}
 
