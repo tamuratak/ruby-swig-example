@@ -14,6 +14,13 @@ Rake::TestTask.new do |t|
   t.libs << 'test'
 end
 
-desc "Run tests"
-task :default => :test
 
+task :swig do  
+  Dir::glob("ext/*/*.i"){|f|
+    sh "swig -c++ -ruby #{f}"
+  }
+end
+
+
+desc "Run tests"
+task :default => [:test]
