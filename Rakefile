@@ -2,7 +2,11 @@ require "rake/extensiontask"
 require 'rake/testtask'
 require 'rake/clean'
 
-["stl", "cpp11", "enum"].each{|s|
+[
+#"stl", 
+#"cpp11", 
+#"enum", 
+"typemap"].each{|s|
   Rake::ExtensionTask.new s do |ext|
     ext.lib_dir = "lib/mylib"
   end

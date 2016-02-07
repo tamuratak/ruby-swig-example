@@ -22,5 +22,9 @@ class TestEnum < Test::Unit::TestCase
     assert_equal([K::A, K::B],
                  K.f_enum_v2([K::A, K::B]))
   end
+
+  def test_typemap
+    assert_equal(3, Typemap.fv(3))
+  end
 end
 
