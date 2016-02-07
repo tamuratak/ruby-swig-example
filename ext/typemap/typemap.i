@@ -1,9 +1,6 @@
 %module "mylib::typemap"
 
 %include std_vector.i
-%include std_string.i
-%include std_map.i
-%include std_pair.i
 
 %{
 
@@ -11,6 +8,11 @@
 
 %}
 
+%template(StdVectorInt) std::vector< int >;
+typedef std::vector< int > StdVectorInt;
+// typedef int mylib_t;
 %apply int { mylib_t };
 
-int fv(mylib_t v);
+
+int fv(const mylib_t v);
+StdVectorInt fvec(const StdVectorInt& v);

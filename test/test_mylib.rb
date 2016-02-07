@@ -25,6 +25,8 @@ class TestEnum < Test::Unit::TestCase
 
   def test_typemap
     assert_equal(3, Typemap.fv(3))
+    assert_equal([1, 2],
+                 Typemap.fvec([1, 2]))
   end
 end
 
