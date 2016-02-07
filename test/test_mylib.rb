@@ -19,6 +19,8 @@ class TestEnum < Test::Unit::TestCase
                  K.f_enum(K::A))
     assert_equal([K::A, K::B],
                  K.f_enum_v([K::A, K::B]))
+    assert_equal([K::A, K::B],
+                 K.f_enum_v2([K::A, K::B]))
   end
 end
 
