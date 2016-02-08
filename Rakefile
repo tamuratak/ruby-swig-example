@@ -2,11 +2,14 @@ require "rake/extensiontask"
 require 'rake/testtask'
 require 'rake/clean'
 
+elibs =
 [
 #"stl", 
 #"cpp11", 
 #"enum", 
-"typemap"].each{|s|
+"typemap"]
+
+elibs.each{|s|
   Rake::ExtensionTask.new s do |ext|
     ext.lib_dir = "lib/mylib"
   end
@@ -17,8 +20,8 @@ Rake::TestTask.new do |t|
 end
 
 task :swig do  
-  Dir::glob("ext/*/*.i"){|f|
-    sh "swig -c++ -ruby -Wall #{f}"
+  elibs.each{|f|
+    sh "swig -c++ -ruby -Wall ext/#{f}/#{f}.i"
   }
 end
 
