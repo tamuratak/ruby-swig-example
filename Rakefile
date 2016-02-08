@@ -10,18 +10,20 @@ elibs.each{|s|
   end
 }
 
+namespace :swg do
+  elibs.each{|f|
+    task f do
+      sh "swig -c++ -ruby -Wall ext/#{f}/#{f}.i"
+    end
+  }
+end
+
 Rake::TestTask.new do |t|
   t.libs << 'test'
 end
-
-elibs.each{|f|
-  task f do
-    sh "swig -c++ -ruby -Wall ext/#{f}/#{f}.i"
-  end
-}
-
 desc "Run tests"
-task :swig => elibs
+
+task :swig => elibs.map{|f| "swg:#{f}" }
 task :default => [:test]
 task :build => [:swig, :compile]
 
