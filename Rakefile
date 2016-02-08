@@ -2,12 +2,7 @@ require "rake/extensiontask"
 require 'rake/testtask'
 require 'rake/clean'
 
-elibs =
-[
-#"stl", 
-#"cpp11", 
-#"enum", 
-"typemap"]
+elibs = ["stl", "cpp11", "enum", "typemap"]
 
 elibs.each{|s|
   Rake::ExtensionTask.new s do |ext|
@@ -19,12 +14,15 @@ Rake::TestTask.new do |t|
   t.libs << 'test'
 end
 
-task :swig do  
-  elibs.each{|f|
+elibs.each{|f|
+  task f do
     sh "swig -c++ -ruby -Wall ext/#{f}/#{f}.i"
-  }
-end
+  end
+}
 
 desc "Run tests"
+task :swig => elibs
 task :default => [:test]
 task :build => [:swig, :compile]
+
+# rake compile:stl
