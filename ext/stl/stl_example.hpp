@@ -37,6 +37,10 @@ const class A& ret_ref_a( const class A& a ) {
   return a;
 }
 
+const class A& ret_ref_a2( const class A* a ) {
+  return *a;
+}
+
 const class A* ret_ptr_a( const class A* a ) {
   return a;
 }
