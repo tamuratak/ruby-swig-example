@@ -19,4 +19,10 @@ int vec_len(const std::vector<std::string>& s);
 std::string get_hash_x(const std::map< std::string, std::string >& h);
 std::string first_string(const std::vector< std::vector<std::string> >& v);
 
+class A {
+public:
+  unsigned long int get_address();
+};
 
+A ret_a(const A&);
+A& ret_ref_a(const A&);

@@ -11,6 +11,13 @@ class TestEnum < Test::Unit::TestCase
                  Stl::get_hash_x({"x" => "foo"}) )
     assert_equal("bar", 
                  Stl::first_string( [["bar", "foo"], ["xxx"]] ))
+    a = Stl::A.new
+    b = Stl::A.new
+    assert_equal(a.get_address, a.get_address)
+    assert( a.get_address != b.get_address )
+    assert( a.get_address != Stl.ret_a(a).get_address )
+    assert_equal( a.get_address,
+                  Stl.ret_ref_a(a).get_address)
   end
 
 

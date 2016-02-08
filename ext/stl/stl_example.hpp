@@ -21,3 +21,18 @@ static void from_myclassvec(const std::vector< MyClass >& v) {
   std::cout << v[0].get() << std::endl;
 }
 */
+
+class A {
+public:
+  unsigned long int get_address(){
+    return reinterpret_cast<unsigned long int>(this);
+  }
+};
+
+class A ret_a( const class A& a ) {
+  return a;
+}
+
+const class A& ret_ref_a( const class A& a ) {
+  return a;
+}
