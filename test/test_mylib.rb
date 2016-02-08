@@ -18,6 +18,12 @@ class TestEnum < Test::Unit::TestCase
     assert( a.get_address != Stl.ret_a(a).get_address )
     assert_equal( a.get_address,
                   Stl.ret_ref_a(a).get_address)
+    assert_equal( a.get_address,
+                  Stl.ret_ptr_a(a).get_address)
+    assert_equal( a.get_address,
+                  Stl.first_ref_a([a]).get_address)
+    assert_equal( a.get_address,
+                  Stl.first_ptr_a([a]).get_address)
   end
 
 

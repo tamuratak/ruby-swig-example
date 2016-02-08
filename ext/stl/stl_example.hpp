@@ -36,3 +36,16 @@ class A ret_a( const class A& a ) {
 const class A& ret_ref_a( const class A& a ) {
   return a;
 }
+
+const class A* ret_ptr_a( const class A* a ) {
+  return a;
+}
+
+
+const class A& first_ref_a( const std::vector< A* >& v){
+  return *v[0];
+}
+
+const class A* first_ptr_a( const std::vector< A* >& v){
+  return v[0];
+}
