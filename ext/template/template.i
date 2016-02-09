@@ -10,3 +10,13 @@
 #include "template.hpp"
 
 %}
+
+namespace tpl {
+  template <class T>
+  class A {
+  public:
+    A(const T&);
+  };
+  //  typedef A<int> AInt;
+  %template(AInt) A<int>;
+};

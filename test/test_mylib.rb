@@ -43,5 +43,9 @@ class TestEnum < Test::Unit::TestCase
     assert_equal([1, 2],
                  Typemap.fvec([1, 2]))
   end
+
+  def test_template
+    Template::AInt.new(3)
+  end
 end
 
