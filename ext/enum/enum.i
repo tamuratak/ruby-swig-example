@@ -23,10 +23,8 @@
 
 %}
 
-typedef std::vector< enum K::Enm > StdVectorEnm;
-typedef std::vector< int > StdVectorInt;
 %template(StdVectorEnm) std::vector< enum K::Enm >;
-%template(StdVectorInt) std::vector< int >;
+%template() std::vector< int >;
 
 
 class K {
@@ -36,7 +34,7 @@ public:
 
   %extend {
     static std::vector< K::Enm > K::f_enum_v(const std::vector< int >& v){
-      std::vector< enum K::Enm > ret(v.size());
+      std::vector< K::Enm > ret(v.size());
       for(int i=0; i < v.size(); ++i) {
         ret[i] = static_cast<K::Enm>(v[i]);
       }
