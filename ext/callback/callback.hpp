@@ -8,21 +8,31 @@ namespace callback {
     return rb_proc_call(args[0], args[1]);
   }
   
-  std::vector<double> foo(){
+  std::vector<double> call_block(){
     VALUE prc = rb_block_proc();
     VALUE a;
     VALUE args[2];
     args[0] = prc;
     args[1] = rb_ary_new();
-    a = rb_rescue2(RUBY_METHOD_FUNC(my_rb_proc_call), (VALUE) args, 
+    a = rb_rescue2(RUBY_METHOD_FUNC(my_rb_proc_call), (VALUE) args,
                    0, 0, rb_eStandardError);
 
     std::vector< double > *x;
     if( !NIL_P(a) && SWIG_IsOK(swig::asptr(a, &x)) ){
       return *x;
     }else{
-      SWIG_Error(SWIG_RuntimeError, "error error error");
+      SWIG_Error(SWIG_RuntimeError, "Array of double expected");
     }    
+  }
+
+  void call_no_raise() {
+    VALUE prc = rb_block_proc();
+    VALUE a;
+    VALUE args[2];
+    args[0] = prc;
+    args[1] = rb_ary_new();
+    a = rb_rescue2(RUBY_METHOD_FUNC(my_rb_proc_call), (VALUE) args,
+                   0, 0, rb_cObject);
   }
 
   double bar(){

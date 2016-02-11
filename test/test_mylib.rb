@@ -51,10 +51,19 @@ class TestEnum < Test::Unit::TestCase
   def test_callback
     Callback::bar()
     assert_equal([1.1, 2.1],
-                 Callback::foo(){ [1.1, 2.1] })
-#    Callback::foo() { 
-#        raise StandardError 
-#    }
+                 Callback::call_block{ [1.1, 2.1] })
+    a = 0
+    assert_nothing_raised do
+      Callback::call_no_raise{
+        a = 1
+        raise StandardError
+        raise Object.new
+      }
+    end
+    assert_equal(1, a)
+    assert_raise(RuntimeError){
+      Callback::call_block {1}
+    }
   end
 
 end
