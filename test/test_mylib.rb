@@ -47,5 +47,15 @@ class TestEnum < Test::Unit::TestCase
   def test_template
     Template::AInt.new(3)
   end
+
+  def test_callback
+    Callback::bar()
+    assert_equal([1.1, 2.1],
+                 Callback::foo(){ [1.1, 2.1] })
+#    Callback::foo() { 
+#        raise StandardError 
+#    }
+  end
+
 end
 

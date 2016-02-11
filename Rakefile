@@ -2,7 +2,7 @@ require "rake/extensiontask"
 require 'rake/testtask'
 require 'rake/clean'
 
-elibs = ["stl", "cpp11", "enum", "template", "typemap"]
+elibs = ["callback", "cpp11", "enum", "stl", "template", "typemap"]
 
 elibs.each{|s|
   Rake::ExtensionTask.new s do |ext|
