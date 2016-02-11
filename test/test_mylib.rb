@@ -28,6 +28,12 @@ class TestEnum < Test::Unit::TestCase
                   Stl.first_ptr_a([a]).get_address)
   end
 
+  def test_stl_StdVecAptr
+    a = Stl::A.new
+    arry = Stl::StdVectorAptr.new([a, Stl::A.new])
+    assert_equal(arry[0].get_address,
+                 a.get_address)
+  end
 
   def test_enum
     assert_equal(K::A,

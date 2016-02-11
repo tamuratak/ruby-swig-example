@@ -24,11 +24,11 @@ public:
   unsigned long int get_address();
 };
 
-%template() std::vector< A* >;
+%template(StdVectorAptr) std::vector<A*>;
 
 A ret_a(const A&);
 A& ret_ref_a(const A&);
 A& ret_ref_a2(const A*);
 A* ret_ptr_a(const A*);
-A& first_ref_a(const std::vector< A* >&);
-A* first_ptr_a(const std::vector< A* >&);
+A& first_ref_a(const std::vector<A*>&);
+A* first_ptr_a(const std::vector<A*>&);
