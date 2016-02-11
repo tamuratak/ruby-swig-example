@@ -1,4 +1,5 @@
 require "mylib/callback"
+require "mylib/class"
 require "mylib/stl"
 require "mylib/cpp11"
 require "mylib/enum"

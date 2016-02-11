@@ -66,5 +66,9 @@ class TestEnum < Test::Unit::TestCase
     }
   end
 
+  def test_klass
+    x = Class::A::Create(1.0, 2.0)
+    assert_equal(1.0, x.get_m )
+  end
 end
 
