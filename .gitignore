@@ -1,3 +1,4 @@
+/ext/*/*_wrap.cxx
 *.gem
 *.rbc
 /.config
