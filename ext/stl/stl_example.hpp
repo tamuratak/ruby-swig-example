@@ -1,6 +1,8 @@
 #include <vector>
 #include <string>
 
+
+namespace stl_e{
 int vec_len(const std::vector<std::string> s) {
   return s.size();
 }
@@ -33,23 +35,31 @@ class A ret_a( const class A& a ) {
   return a;
 }
 
-const class A& ret_ref_a( const class A& a ) {
+const A& ret_ref_a( const class A& a ) {
   return a;
 }
 
-const class A& ret_ref_a2( const class A* a ) {
+const A& ret_ref_a2( const class A* a ) {
   return *a;
 }
 
-const class A* ret_ptr_a( const class A* a ) {
+const A* ret_ptr_a( const class A* a ) {
   return a;
 }
 
 
-const class A& first_ref_a( const std::vector< A* >& v){
+const A& first_ref_a( const std::vector< A* >& v){
   return *v[0];
 }
 
-const class A* first_ptr_a( const std::vector< A* >& v){
+const A* first_ptr_a( const std::vector< A* >& v){
   return v[0];
 }
+
+const A& vec_first_a( const std::vector< A >& v){
+  return v[0];
+}
+
+
+
+};
