@@ -33,6 +33,10 @@ class TestEnum < Test::Unit::TestCase
     arry = Stl::StdVectorAptr.new([a, Stl::A.new])
     assert_equal(arry[0].get_address,
                  a.get_address)
+
+    vec = Stl::CreateVec(10)
+    assert_equal(Stl::get_a_from_vec(vec, 3).get_address,
+                 Stl::vec_to_pvec(vec)[3].get_address)
   end
 
   def test_enum

@@ -56,10 +56,13 @@ const A* first_ptr_a( const std::vector< A* >& v){
   return v[0];
 }
 
-const A& vec_first_a( const std::vector< A >& v){
-  return v[0];
+const A& get_a_from_vec( const std::vector< A >& v, int n){
+  return v[n];
 }
 
-
+std::vector<A>& CreateVec(int n){
+  std::vector<A> *p = new std::vector<A>(n);
+  return *p;
+}
 
 };
