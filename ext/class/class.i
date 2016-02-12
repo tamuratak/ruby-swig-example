@@ -15,6 +15,8 @@ namespace Klass {
     A(double);
     ~A();
     double get_m();
+
+    %newobject Create;
     %extend{
       static Klass::A* Create(double a, double b){
         Klass::A* p = new Klass::A(a);
