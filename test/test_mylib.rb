@@ -59,9 +59,10 @@ class TestEnum < Test::Unit::TestCase
   end
 
   def test_callback
-    Callback::bar()
-    assert_equal([1.1, 2.1],
-                 Callback::call_block{ [1.1, 2.1] })
+    ret = Callback::call_block([1, 2]){|*a|
+      a
+    }
+    assert_equal([1, 2], ret)
     a = 0
     assert_nothing_raised do
       Callback::call_no_raise{
@@ -72,7 +73,7 @@ class TestEnum < Test::Unit::TestCase
     end
     assert_equal(1, a)
     assert_raise(RuntimeError){
-      Callback::call_block {1}
+      Callback::call_block([1]) {1}
     }
   end
 

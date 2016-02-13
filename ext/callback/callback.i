@@ -12,7 +12,7 @@
 %}
 
 namespace callback {  
-  std::vector<double> call_block();
+  std::vector<double> call_block(std::vector<double>);
   void call_no_raise();
   double bar();
 };

@@ -8,12 +8,12 @@ namespace callback {
     return rb_proc_call(args[0], args[1]);
   }
   
-  std::vector<double> call_block(){
+  std::vector<double> call_block(const std::vector<double>& v){
     VALUE prc = rb_block_proc();
     VALUE a;
     VALUE args[2];
     args[0] = prc;
-    args[1] = rb_ary_new();
+    args[1] = swig::from< std::vector<double> >(v);
     a = rb_rescue2(RUBY_METHOD_FUNC(my_rb_proc_call), (VALUE) args,
                    0, 0, rb_eStandardError);
 
