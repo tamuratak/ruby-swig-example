@@ -34,9 +34,29 @@ class TestEnum < Test::Unit::TestCase
     assert_equal(arry[0].get_address,
                  a.get_address)
 
-    vec = Stl::CreateVec(10)
+    vec_ = Stl::CreateVec(10)
+    vec = vec_.get_p
     assert_equal(Stl::get_a_from_vec(vec, 3).get_address,
                  Stl::vec_to_pvec(vec)[3].get_address)
+  end
+
+#  def test_stl_StdVecAptr_gc
+#    10000.times do
+#      Stl::CreateVec(10000000)
+#      GC.start
+#    end
+#    sleep 100
+#  end
+
+  def test_stl_VecAptr
+#    vec = Stl::CreateVecAptr(10)
+#    assert_equal(Stl::get_a_from_vec(vec, 3).get_address,
+#                 Stl::vec_to_pvec(vec)[3].get_address)
+#    10000.times do
+#      Stl::CreateVecAptr(10000000)
+#      GC.start
+#    end
+#    sleep 100
   end
 
   def test_enum

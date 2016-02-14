@@ -60,9 +60,32 @@ const A& get_a_from_vec( const std::vector< A >& v, int n){
   return v[n];
 }
 
-std::vector<A>& CreateVec(int n){
+
+class VecA {
+public:
+  VecA(std::vector<A>* p) : p_(p) {}
+  ~VecA() { delete p_; }
+  std::vector<A>* get_p() {
+    return p_;
+  }
+private:
+  std::vector<A>* p_;
+};
+
+VecA* CreateVec(int n){
   std::vector<A> *p = new std::vector<A>(n);
-  return *p;
+  VecA *v = new VecA(p);
+  return v;
+}
+
+class VecAptr : public std::vector<A> {
+public:
+  VecAptr(unsigned int n) : std::vector<A>(n) {};
+};
+
+VecAptr* CreateVecAptr(unsigned int n){
+  VecAptr *p = new VecAptr(n);
+  return p;
 }
 
 };

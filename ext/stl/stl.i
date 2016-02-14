@@ -41,7 +41,7 @@ public:
 };
 
 %template(StdVectorAptr) ::std::vector<stl_e::A*>;
-%template() ::std::vector<stl_e::A>;
+  // %template() ::std::vector<stl_e::A>;
 
 stl_e::A ret_a(const stl_e::A&);
 stl_e::A& ret_ref_a(const stl_e::A&);
@@ -51,9 +51,26 @@ stl_e::A& first_ref_a(const ::std::vector<stl_e::A*>&);
 stl_e::A* first_ptr_a(const ::std::vector<stl_e::A*>&);
 
 const stl_e::A& get_a_from_vec( const std::vector<stl_e::A>& v, int n);
-%newobject CreateVec;
-std::vector<stl_e::A>& CreateVec(int n);
+//  const stl_e::A& get_a_from_vec( const stl_e::VecAptr& v, int n);
 
-  std::vector<stl_e::A*> vec_to_pvec(std::vector<stl_e::A>& v);
+%nodefaultctor VecA;
+class VecA {
+public:
+  ~VecA();
+  std::vector<stl_e::A>* get_p();
+};
+
+%newobject CreateVec;
+stl_e::VecA* CreateVec(int n);
+
+std::vector<stl_e::A*> vec_to_pvec(std::vector<stl_e::A>& v);
+
+class VecAptr {
+public:
+  VecAptr(unsigned int);
+  ~VecAptr();
+};
+
+stl_e::VecAptr* CreateVecAptr(unsigned int n);
 
 };
