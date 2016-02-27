@@ -104,7 +104,7 @@ class TestEnum < Test::Unit::TestCase
 
   def test_multi
     a = Mylib::Multia::A.new
-    p Mylib::Multib::get_a_val(a)
+    assert_equal(1.7, Mylib::Multib::get_a_val(a))
   end
 end
 

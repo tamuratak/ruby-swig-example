@@ -8,8 +8,9 @@
     namespace multi {
       class A {
       public:
-        double get_val() const { return 1.7; }
+        double get_val() const;
       };
+      double A::get_val() const { return 1.7; }
     };
   };
 
@@ -21,7 +22,7 @@
 
 namespace mylib {
   namespace multi {
-    class A{
+    class A {
     public:
       double get_val();
     };

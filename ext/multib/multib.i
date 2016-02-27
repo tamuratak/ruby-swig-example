@@ -7,11 +7,11 @@
 
   namespace mylib {
     namespace multi {
-      class A{
+      class A {
       public:
         double get_val() const;
       };
-      double get_a_val(const mylib::multi::A& a){
+      double get_a_val(const A& a){
         return a.get_val();
       }
     };
@@ -19,12 +19,8 @@
 
 %}
 
-
-
-%template(MultiaVec) std::vector< double >;
-
 namespace mylib {
   namespace multi {
-    double get_a_val(const mylib::multi::A&);
+    double get_a_val(const A&);
   };
 };
