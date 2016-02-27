@@ -101,5 +101,10 @@ class TestEnum < Test::Unit::TestCase
     x = Class::A::Create(1.0, 2.0)
     assert_equal(1.0, x.get_m )
   end
+
+  def test_multi
+    a = Mylib::Multia::A.new
+    p Mylib::Multib::get_a_val(a)
+  end
 end
 
