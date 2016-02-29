@@ -106,5 +106,12 @@ class TestEnum < Test::Unit::TestCase
     a = Mylib::Multia::A.new
     assert_equal(1.7, Mylib::Multib::get_a_val(a))
   end
+
+  def test_primitives
+    assert 8 == Mylib::Primitives::ALong::size || 4 == Mylib::Primitives::ALong::size
+    assert 8 == Mylib::Primitives::AInt::size || 4 == Mylib::Primitives::AInt::size
+    assert_equal(2, Mylib::Primitives::AShort::size)
+    assert_equal(1, Mylib::Primitives::ASChar::size)
+  end
 end
 
