@@ -2,6 +2,7 @@
 #include <iostream>
 #include <functional>
 #include <unordered_map>
+#include <map>
 
 namespace Klass{
 class A {
@@ -15,4 +16,14 @@ private:
    std::unordered_map<int, int> m;
 };
 
+class B {
+public:
+  B( std::map<int, int> b) : m(b) {};
+  ~B() {};
+  std::map<int, int> get_m(){
+    return m;
+  }
+private:
+  std::map<int, int> m;
+};
 };
