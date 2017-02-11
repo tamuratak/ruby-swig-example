@@ -1,6 +1,6 @@
 %module "mylib::typemap"
 
-%include std_vector.i
+ // %include std_vector.i
 
 %{
 
@@ -8,14 +8,19 @@
 
 %}
 
-namespace T {
-  class A {
-  public: 
-    A(int, int);
-    ~A();
+%typemap(in) std::vector<int> {
+  VALUE arry = rb_check_array_type($input);
+  if(NIL_P(arry)) {
+    rb_raise(rb_eArgError, "Array expected"); SWIG_fail;
+  }else{
+    $1.resize(RARRAY_LEN(arry));
+    for (int i=0; i<RARRAY_LEN(arry); i++) {
+	VALUE elt = RARRAY_AREF(arry, i);
+        $1[i] = NUM2INT(elt);
+    }
+  }
+}
 
-    //    double value<double>();
-    //    int valuee();
-    std::vector<A> g();
-  };
+namespace Typemap {
+  int gunc(std::vector<int>);
 };
