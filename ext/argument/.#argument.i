@@ -1,1 +1,0 @@
-tamura@tamura-macbookpro13.local.1076
