@@ -2,8 +2,8 @@ require "rake/extensiontask"
 require 'rake/testtask'
 require 'rake/clean'
 
-elibs = ["callback", "class", "cpp11", "enum", "extend", "multia", "multib", "primitives", "sharedptr", "stl", "template", "typemap"]
-
+elibs = ["argument", "callback", "class", "cpp11", "enum", "extend", "multia", "multib", "primitives", "sandbox", "sharedptr", "stl", "template", "typemap"]
+elibs = ["sandbox"]
 elibs.each{|s|
   Rake::ExtensionTask.new s do |ext|
     ext.lib_dir = "lib/mylib"

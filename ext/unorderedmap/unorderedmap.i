@@ -18,6 +18,7 @@ namespace Klass {
     A(const std::unordered_map<int, int>& h);
     ~A();
     std::unordered_map<int, int> get_m();
+    std::unordered_map<int, int>& get_ref_m();
   };
 
   class B {

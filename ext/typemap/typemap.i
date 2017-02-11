@@ -8,11 +8,14 @@
 
 %}
 
-%template(StdVectorInt) std::vector< int >;
-typedef std::vector< int > StdVectorInt;
-// typedef int mylib_t;
-%apply int { mylib_t };
+namespace T {
+  class A {
+  public: 
+    A(int, int);
+    ~A();
 
-
-int fv(const mylib_t v);
-StdVectorInt fvec(const StdVectorInt& v);
+    //    double value<double>();
+    //    int valuee();
+    std::vector<A> g();
+  };
+};

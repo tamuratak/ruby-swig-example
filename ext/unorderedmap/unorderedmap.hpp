@@ -12,6 +12,10 @@ public:
   std::unordered_map<int, int> get_m(){
     return m;
   }
+  std::unordered_map<int, int>& get_ref_m(){
+    return m;
+  }
+
 private:
    std::unordered_map<int, int> m;
 };
