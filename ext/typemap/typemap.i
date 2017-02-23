@@ -66,9 +66,28 @@
   $1 = bptr;
 }
 
+
+%typemap(in) Typemap::C {
+  Typemap::C *cptr = swig::asval<Typemap::C>((VALUE) $input, "Typemap::C expected");
+  $1 = *cptr;
+}
+
 %{
 
 namespace swig {
+
+  template<class T>
+  static T* asval(VALUE obj, const char* msg) {
+    T *ptr=0;
+    int res = asval(obj, &ptr);
+    if (!SWIG_IsOK(res)) {
+      rb_raise(rb_eArgError, msg);
+    }
+    if (!ptr) {
+      rb_raise(rb_eArgError, msg);
+    }
+    return ptr;
+  }
 
   template <> struct traits< ::Typemap::A > {
     typedef value_category category;
@@ -78,6 +97,11 @@ namespace swig {
   template <> struct traits< ::Typemap::B > {
     typedef value_category category;
     static const char* type_name() { return "Typemap::B"; }
+  };
+
+  template <> struct traits< ::Typemap::C > {
+    typedef value_category category;
+    static const char* type_name() { return "Typemap::C"; }
   };
 
 };
@@ -98,8 +122,17 @@ namespace Typemap {
     B(int);
     ~B();
   };
+
+  class C {
+  public:
+    C();
+    C(int);
+    ~C();
+  };
+
   int gunc(std::vector<int>);
   int hunc(std::vector<A>);
-  int junc(A);
-  int iunc(B);
+  int iunc(A);
+  int junc(B);
+  int kunc(C);
 };

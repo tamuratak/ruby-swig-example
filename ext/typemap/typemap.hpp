@@ -17,17 +17,31 @@ namespace Typemap {
     int m;
   };
 
+  class C {
+  public:
+    C() : m(0) {};
+    C(int a) : m(a) {};
+    int get_m() { return m; }
+    int m;
+  };
+
   int gunc(std::vector<int> v) { return v[0]; }
   int hunc(std::vector<A> v) {
     return v[0].get_m();
   }
-  int junc(A a) {
+
+  int iunc(A b) {
+    return b.get_m();
+  }
+
+  int junc(B a) {
     return a.get_m();
   }
 
-  int iunc(B b) {
-    return b.get_m();
+  int kunc(C c) {
+    return c.get_m();
   }
+
 };
 
 
