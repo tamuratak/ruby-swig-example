@@ -1,6 +1,6 @@
 %module "mylib::typemap"
 
-%include std_vector.i
+%include stl.i
 
 %{
 
@@ -55,7 +55,6 @@
   $1 = *aptr;
 }
 
-
 %typemap(in) Typemap::B {
   Typemap::B bptr;
   int res = swig::asval((VALUE) $input, &bptr);
@@ -67,27 +66,40 @@
 }
 
 
-%typemap(in) Typemap::C {
-  Typemap::C *cptr = swig::asval<Typemap::C>((VALUE) $input, "Typemap::C expected");
+%traits_swigtype(Typemap::C);
+%fragment("MyToPtr", "header", fragment="StdTraits") {
+namespace swig {
+  template<class T>
+  static T* toptr(VALUE obj, const char* msg) {
+    T *ptr=0;
+    int res = asptr(obj, &ptr);
+    if (!SWIG_IsOK(res) || !ptr) {
+      rb_raise(rb_eArgError, "%s", msg);
+    }
+    return ptr;
+  }
+
+  template<class T>
+  static T* toptr(VALUE obj) {
+    T *ptr=0;
+    int res = asptr(obj, &ptr);
+    if (!SWIG_IsOK(res) || !ptr) {
+      rb_raise(rb_eArgError, "%s expected", traits<T>::type_name());
+    }
+    return ptr;
+  }
+
+};
+}
+
+%typemap(in, "header", fragment="MyToPtr", fragment=SWIG_Traits_frag(Typemap::C)) Typemap::C {
+  Typemap::C *cptr = swig::toptr<Typemap::C>((VALUE) $input);
   $1 = *cptr;
 }
 
 %{
 
 namespace swig {
-
-  template<class T>
-  static T* asval(VALUE obj, const char* msg) {
-    T *ptr=0;
-    int res = asval(obj, &ptr);
-    if (!SWIG_IsOK(res)) {
-      rb_raise(rb_eArgError, msg);
-    }
-    if (!ptr) {
-      rb_raise(rb_eArgError, msg);
-    }
-    return ptr;
-  }
 
   template <> struct traits< ::Typemap::A > {
     typedef value_category category;
@@ -97,11 +109,6 @@ namespace swig {
   template <> struct traits< ::Typemap::B > {
     typedef value_category category;
     static const char* type_name() { return "Typemap::B"; }
-  };
-
-  template <> struct traits< ::Typemap::C > {
-    typedef value_category category;
-    static const char* type_name() { return "Typemap::C"; }
   };
 
 };
