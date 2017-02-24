@@ -65,8 +65,17 @@
   $1 = bptr;
 }
 
-
 %traits_swigtype(Typemap::C);
+
+%define swig_required_fragment(Type,...)
+#if `__VA_ARGS__` != ""
+  fragment= ## SWIG_Traits_frag(Type), swig_required_fragment(__VA_ARGS__)
+#else
+  fragment= ## SWIG_Traits_frag(Type)
+#endif
+%enddef
+ //  foofoo(Typemap::A, Typemap::B)
+
 %fragment("MyToPtr", "header", fragment="StdTraits", fragment=SWIG_Traits_frag(Typemap::C)) {
 namespace swig {
   template<class T>
