@@ -67,7 +67,7 @@
 
 
 %traits_swigtype(Typemap::C);
-%fragment("MyToPtr", "header", fragment="StdTraits") {
+%fragment("MyToPtr", "header", fragment="StdTraits", fragment=SWIG_Traits_frag(Typemap::C)) {
 namespace swig {
   template<class T>
   static T* toptr(VALUE obj, const char* msg) {
@@ -92,7 +92,7 @@ namespace swig {
 };
 }
 
-%typemap(in, "header", fragment="MyToPtr", fragment=SWIG_Traits_frag(Typemap::C)) Typemap::C {
+%typemap(in, fragment="MyToPtr") Typemap::C  {
   Typemap::C *cptr = swig::toptr<Typemap::C>((VALUE) $input);
   $1 = *cptr;
 }
