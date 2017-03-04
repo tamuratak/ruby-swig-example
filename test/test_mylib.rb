@@ -40,25 +40,6 @@ class TestEnum < Test::Unit::TestCase
                  Stl::vec_to_pvec(vec)[3].get_address)
   end
 
-#  def test_stl_StdVecAptr_gc
-#    10000.times do
-#      Stl::CreateVec(10000000)
-#      GC.start
-#    end
-#    sleep 100
-#  end
-
-  def test_stl_VecAptr
-#    vec = Stl::CreateVecAptr(10)
-#    assert_equal(Stl::get_a_from_vec(vec, 3).get_address,
-#                 Stl::vec_to_pvec(vec)[3].get_address)
-#    10000.times do
-#      Stl::CreateVecAptr(10000000)
-#      GC.start
-#    end
-#    sleep 100
-  end
-
   def test_enum
     assert_equal(K::A,
                  K.f_enum(K::A))
@@ -66,12 +47,6 @@ class TestEnum < Test::Unit::TestCase
                  K.f_enum_v([K::A, K::B]))
     assert_equal([K::A, K::B],
                  K.f_enum_v2([K::A, K::B]))
-  end
-
-  def test_typemap
-    assert_equal(3, Typemap.fv(3))
-    assert_equal([1, 2],
-                 Typemap.fvec([1, 2]))
   end
 
   def test_template
@@ -97,21 +72,10 @@ class TestEnum < Test::Unit::TestCase
     }
   end
 
-  def test_klass
-    x = Class::A::Create(1.0, 2.0)
-    assert_equal(1.0, x.get_m )
-  end
-
   def test_multi
     a = Mylib::Multia::A.new
     assert_equal(1.7, Mylib::Multib::get_a_val(a))
   end
 
-  def test_primitives
-    assert 8 == Mylib::Primitives::ALong::size || 4 == Mylib::Primitives::ALong::size
-    assert 8 == Mylib::Primitives::AInt::size || 4 == Mylib::Primitives::AInt::size
-    assert_equal(2, Mylib::Primitives::AShort::size)
-    assert_equal(1, Mylib::Primitives::ASChar::size)
-  end
 end
 
