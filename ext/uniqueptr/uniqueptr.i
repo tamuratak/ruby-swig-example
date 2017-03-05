@@ -17,14 +17,14 @@ namespace std {
   };
 }
 
-%define wrap_unique_ptr(Name, Type)
+%define %wrap_unique_ptr(Name, Type)
   %template(Name) std::unique_ptr<Type>;
   %typemap(out) std::unique_ptr<Type> %{
-    $result = SWIG_NewPointerObj(new $1_ltype(std::move($1)), $&1_descriptor, SWIG_POINTER_OWN);
+    $result = SWIG_NewPointerObj(new std::unique_ptr<Type>(std::move($1)), $1_descriptor, 1);
   %}
 %enddef
 
-wrap_unique_ptr(StdUniquePtrA, A)
+%wrap_unique_ptr(StdUniquePtrA, A)
 
 %extend std::unique_ptr<A> {
   %newobject create;
