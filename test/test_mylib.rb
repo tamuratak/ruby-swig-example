@@ -77,5 +77,16 @@ class TestEnum < Test::Unit::TestCase
     assert_equal(1.7, Mylib::Multib::get_a_val(a))
   end
 
+  def test_conv
+    a = Conv::A.new
+    assert_kind_of( Conv::A, Conv::return_a(a)           )
+    assert_kind_of( Conv::A, Conv::return_ref_a(a)       )
+    assert_kind_of( Conv::A, Conv::return_ptr_a(a)       )
+    assert_kind_of( Conv::A, Conv::return_const_ref_a(a) )
+    assert_kind_of( Array,   Conv::return_vec_a(a)       )
+    assert_kind_of( Array,   Conv::return_const_vec_a(a) )
+    assert_kind_of( Conv::StdVectorA, Conv::return_ptr_vec_a(a) )
+    assert_kind_of( Conv::StdVectorA, Conv::return_ref_vec_a(a) )
+  end
 end
 
