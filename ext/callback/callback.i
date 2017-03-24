@@ -1,13 +1,6 @@
 %module(directors="1") "mylib::callback"
 
-%include std_vector.i
-
-%template(StdVectorDouble) std::vector<double>;
-
-
 %{
-
-#include "callback.hpp"
 
 class Base {
 public:
@@ -23,12 +16,6 @@ int get_m(Base *b) {
 }
 
 %}
-
-namespace callback {  
-  std::vector<double> call_block(std::vector<double>);
-  void call_no_raise();
-  double bar();
-};
 
 %feature("director") Base;
 
