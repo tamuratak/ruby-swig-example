@@ -24,6 +24,18 @@
 #include <functional>
 #include <stdexcept>
 
+
+  extern "C" VALUE funcaller_r_proc(VALUE data, VALUE exc) {
+      bool *is_raised_ = (bool *) data;
+      *is_raised_ = true;
+      return exc;
+  }
+
+  extern "C" VALUE funcaller_call_b_proc(VALUE b_proc) {
+      std::function<VALUE(void)> *f = (std::function<VALUE(void)>*) b_proc;
+      return (*f)();
+  }
+
   struct Funcaller {
     static VALUE call(std::function<VALUE(void)>& b_proc) {
       bool is_raised = false;
