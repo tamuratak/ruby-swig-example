@@ -19,12 +19,12 @@
 #include <type_traits>
 #include <stdexcept>
 
-  template<class R, class Arg1 >
-  struct Functor : swig::GC_VALUE {
-    Functor(VALUE obj = Qnil) : GC_VALUE(obj), is_raised(false) {}
-    R operator()(Arg1 a1) {
-      VALUE arg1 = swig::from(a1);
-      std::function<VALUE(void)> b_proc = [=]() { return rb_funcall(_obj, rb_intern("call"), 1, arg1); };
+  template <class R>
+  struct FunctorBase {
+
+    FunctorBase() : is_raised(false) {}
+
+    VALUE funcall_impl(const std::function<VALUE(void)>& b_proc) {
       VALUE res = rb_rescue2(RUBY_METHOD_FUNC(call_b_proc), (VALUE) &b_proc,
                              RUBY_METHOD_FUNC(r_proc), (VALUE) &is_raised,
                              rb_eException, 0);
@@ -34,6 +34,10 @@
         is_raised = false;
         throw std::runtime_error(StringValueCStr(m));
       }
+      return res;
+    }
+
+    R as_impl(VALUE res) {
       return swig::as< R >(res);
     }
 
@@ -43,25 +47,66 @@
       return exc;
     }
 
-    static VALUE call_b_proc(VALUE f) {
-      std::function<VALUE(void)> *f_ = (std::function<VALUE(void)>*) f;
-      return (*f_)();
+    static VALUE call_b_proc(VALUE b_proc) {
+      std::function<VALUE(void)> *f = (std::function<VALUE(void)>*) b_proc;
+      return (*f)();
     };
 
     bool is_raised;
+
   };
-  
+
+  template<> void FunctorBase<void>::as_impl(VALUE ret) {}
+
+  template<class R, class Arg1=void, class Arg2=void>
+    struct Functor : swig::GC_VALUE, FunctorBase<R> {
+
+    Functor(VALUE obj = Qnil) : GC_VALUE(obj) {}
+
+    R operator()(const Arg1& arg1, const Arg2& arg2) {
+      VALUE a1 = swig::from(arg1);
+      std::function<VALUE(void)> b_proc = [=]() { return rb_funcall(_obj, rb_intern("call"), 1, a1); };
+      VALUE res = FunctorBase<R>::funcall_impl(b_proc);
+      return FunctorBase<R>::as_impl(res);
+    }
+
+  };
+
+  template<class R, class Arg1>
+    struct Functor<R, Arg1> : swig::GC_VALUE, FunctorBase<R> {
+
+    Functor(VALUE obj = Qnil) : GC_VALUE(obj) {}
+
+    R operator()(const Arg1& args1) {
+      VALUE a1 = swig::from(args1);
+      std::function<VALUE(void)> b_proc = [=]() { return rb_funcall(_obj, rb_intern("call"), 1, a1); };
+      VALUE res = FunctorBase<R>::funcall_impl(b_proc);
+      return FunctorBase<R>::as_impl(res);
+    }
+
+  };
+
+
 %}
 
-  template<class R, class Arg1 >
-  struct Functor : swig::GC_VALUE {
-    Functor(VALUE obj = Qnil) : GC_VALUE(obj) {}
-    R operator()(Arg1 a1);
-    %fragment(SWIG_Traits_frag(R));
-    %fragment(SWIG_Traits_frag(Arg1));
-  };
+template<class R, class Arg1, class Arg2 = void >
+struct Functor : swig::GC_VALUE {
+  Functor(VALUE obj = Qnil) : GC_VALUE(obj) {}
+  R operator()(const Arg1&, const Arg2&);
+  %fragment(SWIG_Traits_frag(R));
+  %fragment(SWIG_Traits_frag(Arg1));
+  %fragment(SWIG_Traits_frag(Arg2));
+};
+template<class R, class Arg1 >
+struct Functor<R, Arg1, void> : swig::GC_VALUE {
+  Functor(VALUE obj = Qnil) : GC_VALUE(obj) {}
+  R operator()(const Arg1& a1);
+  %fragment(SWIG_Traits_frag(R));
+  %fragment(SWIG_Traits_frag(Arg1));
+};
 
 %template(FunctorIntInt) Functor<int, int >;
+%template(FunctorIntIntDouble) Functor<void, int, double >;
 %template(FunctorIntVec) Functor<int, std::vector<int> >;
 
 %init %{
