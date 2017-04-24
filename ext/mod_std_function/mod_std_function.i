@@ -3,14 +3,12 @@
 %include <std_common.i>
 %include <std_vector.i>
 
-
-
 %exception {
   try {
     $action
   }
-  catch (const std::exception &e) {
-    rb_raise(rb_eRuntimeError, "%s", e.what());
+  catch (const funcaller_error &e) {
+    rb_jump_tag(e.state);
   }
 }
 
@@ -24,12 +22,11 @@
 #include <functional>
 #include <stdexcept>
 
-
-  extern "C" VALUE funcaller_r_proc(VALUE data, VALUE exc) {
-      bool *is_raised_ = (bool *) data;
-      *is_raised_ = true;
-      return exc;
-  }
+  class funcaller_error {
+  public:
+    funcaller_error(int i) : state(i) {}
+    int state;
+  };
 
   extern "C" VALUE funcaller_call_b_proc(VALUE b_proc) {
       std::function<VALUE(void)> *f = (std::function<VALUE(void)>*) b_proc;
@@ -38,31 +35,13 @@
 
   struct Funcaller {
     static VALUE call(std::function<VALUE(void)>& b_proc) {
-      bool is_raised = false;
-      VALUE res = rb_rescue2(RUBY_METHOD_FUNC(call_b_proc), (VALUE) &b_proc,
-                             RUBY_METHOD_FUNC(r_proc),      (VALUE) &is_raised,
-                             rb_eException, 0);
-      if (is_raised) {
-        VALUE backtrace = rb_funcall(res, rb_intern("backtrace"), 0);
-        VALUE m = rb_funcall(res, rb_intern("message"), 0);
-        backtrace = rb_funcall(backtrace, rb_intern("join"), 1, rb_str_new2("\n\t\t"));
-        m = rb_str_concat(m, rb_str_new2(" "));
-        m = rb_str_concat(m, backtrace);
-        throw std::runtime_error(StringValueCStr(m));
+      int state = 0;
+      VALUE res = rb_protect(funcaller_call_b_proc, (VALUE) &b_proc, &state);
+      if (state) {
+        throw funcaller_error(state);
       }
       return res;
     }
-
-    static VALUE r_proc(VALUE data, VALUE exc) {
-      bool *is_raised_ = (bool *) data;
-      *is_raised_ = true;
-      return exc;
-    }
-
-    static VALUE call_b_proc(VALUE b_proc) {
-      std::function<VALUE(void)> *f = (std::function<VALUE(void)>*) b_proc;
-      return (*f)();
-    };
   };
 
   template <class R>
