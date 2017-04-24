@@ -22,9 +22,33 @@
 %fragment("hogehoge", "header", fragment="StdTraits")
 {
 #include <functional>
-#include <type_traits>
 #include <stdexcept>
 
+  struct Funcaller {
+    static VALUE call(std::function<VALUE(void)>& b_proc) {
+      bool is_raised = false;
+      VALUE res = rb_rescue2(RUBY_METHOD_FUNC(call_b_proc), (VALUE) &b_proc,
+                             RUBY_METHOD_FUNC(r_proc),      (VALUE) &is_raised,
+                             rb_eException, 0);
+      if (is_raised) {
+        VALUE backtrace = rb_funcall(res, rb_intern("backtrace"), 0);
+        VALUE m = rb_funcall(backtrace, rb_intern("join"), 1, rb_str_new2("\n\t\t"));
+        throw std::runtime_error(StringValueCStr(m));
+      }
+      return res;
+    }
+
+    static VALUE r_proc(VALUE data, VALUE exc) {
+      bool *is_raised_ = (bool *) data;
+      *is_raised_ = true;
+      return exc;
+    }
+
+    static VALUE call_b_proc(VALUE b_proc) {
+      std::function<VALUE(void)> *f = (std::function<VALUE(void)>*) b_proc;
+      return (*f)();
+    };
+  };
 
   template <class R>
     struct FunctorBase {
@@ -43,34 +67,13 @@
 
     R operator()(const Args&... args) {
       std::function<VALUE(void)> b_proc = [&]() { return rb_funcall(_obj, rb_intern("call"), sizeof...(Args), swig::from(args)...); };
-      bool is_raised = false;
-      VALUE res = rb_rescue2(RUBY_METHOD_FUNC(call_b_proc), (VALUE) &b_proc,
-                             RUBY_METHOD_FUNC(r_proc), (VALUE) &is_raised,
-                             rb_eException, 0);
-      if (is_raised) {
-        VALUE backtrace = rb_funcall(res, rb_intern("backtrace"), 0);
-        VALUE m = rb_funcall(backtrace, rb_intern("join"), 1, rb_str_new2("\n\t\t"));
-        is_raised = false;
-        throw std::runtime_error(StringValueCStr(m));
-      }
+      VALUE res = Funcaller::call(b_proc);
       return FunctorBase<R>::as_impl(res);
     }
 
     function_type to_function() {
       return *this;
     }
-
-    static VALUE r_proc(VALUE data, VALUE exc) {
-      bool *is_raised_ = (bool *) data;
-      *is_raised_ = true;
-      return exc;
-    }
-
-    static VALUE call_b_proc(VALUE b_proc) {
-      std::function<VALUE(void)> *f = (std::function<VALUE(void)>*) b_proc;
-      return (*f)();
-    };
-
   };
 
  int hunc(std::function<int(int)>& f) {
