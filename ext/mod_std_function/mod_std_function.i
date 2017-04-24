@@ -39,10 +39,11 @@
     struct Functor : swig::GC_VALUE, FunctorBase<R> {
     typedef std::function<R(Args...)> function_type;
 
-    Functor(VALUE obj = Qnil) : GC_VALUE(obj), is_raised(false) {}
+    Functor(VALUE obj = Qnil) : GC_VALUE(obj) {}
 
     R operator()(const Args&... args) {
       std::function<VALUE(void)> b_proc = [&]() { return rb_funcall(_obj, rb_intern("call"), sizeof...(Args), swig::from(args)...); };
+      bool is_raised = false;
       VALUE res = rb_rescue2(RUBY_METHOD_FUNC(call_b_proc), (VALUE) &b_proc,
                              RUBY_METHOD_FUNC(r_proc), (VALUE) &is_raised,
                              rb_eException, 0);
@@ -70,7 +71,6 @@
       return (*f)();
     };
 
-    bool is_raised;
   };
 
  int hunc(std::function<int(int)>& f) {
