@@ -3,7 +3,7 @@
 %include <std_common.i>
 %include <std_vector.i>
 
-%template() std::vector<int>;
+
 
 %exception {
   try {
@@ -14,7 +14,13 @@
   }
 }
 
-%wrapper %{
+%{
+  typedef std::vector<int> VecInt;
+  template<class R, class...Args> struct Functor;
+%}
+
+%fragment("hogehoge", "header", fragment="StdTraits")
+{
 #include <functional>
 #include <type_traits>
 #include <stdexcept>
@@ -39,7 +45,7 @@
       std::function<VALUE(void)> b_proc = [&]() { return rb_funcall(_obj, rb_intern("call"), sizeof...(Args), swig::from(args)...); };
       VALUE res = rb_rescue2(RUBY_METHOD_FUNC(call_b_proc), (VALUE) &b_proc,
                              RUBY_METHOD_FUNC(r_proc), (VALUE) &is_raised,
-                             rb_eStandardError, 0);
+                             rb_eException, 0);
       if (is_raised) {
         VALUE backtrace = rb_funcall(res, rb_intern("backtrace"), 0);
         VALUE m = rb_funcall(backtrace, rb_intern("join"), 1, rb_str_new2("\n\t\t"));
@@ -67,13 +73,13 @@
     bool is_raised;
   };
 
-typedef std::function<int(int)> hoge;
-
  int hunc(std::function<int(int)>& f) {
    return f(9);
  }
 
-%}
+}
+
+%fragment("hogehoge");
 
 template<class R, class Arg1=void, class Arg2=void, class Arg3=void, class Arg4=void, class Arg5=void, class Arg6=void, class Arg7=void, class Arg8=void, class Arg9=void>
 struct Functor : swig::GC_VALUE {
@@ -203,14 +209,31 @@ struct Functor<void, Arg1, Arg2, void, void, void, void, void, void, void> : swi
 template<class R, class Arg>
 class std::function {};
 
+%define %call_traits_frag(Type, ...)
+  %fragment(SWIG_Traits_frag(Type));
+  %call_traits_frag(__VA_ARGS__);
+%enddef
+
+
 %define %std_function(Name, R, ...)
 template<>
 class std::function<R(__VA_ARGS__)> {
 public:
   R operator()(__VA_ARGS__);
+  //  %call_traits_frag(R, __VA_ARGS__);
+  %extend{
+    std::function(VALUE obj) {
+      auto ret = new std::function<R(__VA_ARGS__)>();
+      *ret = Functor< R , __VA_ARGS__ >(obj);
+      return ret;
+    }
+  }
 };
-%template(Name) std::function<R(__VA_ARGS__)>;
+%template(Name) std::function<int(__VA_ARGS__)>;
 %enddef
+
+%template(VecInt) std::vector<int>;
+typedef std::vector<int> VecInt;
 
 %template(FunctorIntInt) Functor<int, int>;
 %template(FunctorVoidIntDouble) Functor<void, int, double>;
@@ -219,8 +242,8 @@ public:
 %template(FunctorIntInt8) Functor<int, int, int, int, int, int, int, int, int>;
 %template(FunctorIntInt7) Functor<int, int, int, int, int, int, int, int>;
 
-
-%std_function(Hoge, int, int);
+%std_function(FunctionIntInt, int, int);
+%std_function(FunctionIntVec, int, VecInt);
 
 int hunc(std::function<int(int)>& f);
 %init %{
