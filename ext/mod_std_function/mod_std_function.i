@@ -32,7 +32,10 @@
                              rb_eException, 0);
       if (is_raised) {
         VALUE backtrace = rb_funcall(res, rb_intern("backtrace"), 0);
-        VALUE m = rb_funcall(backtrace, rb_intern("join"), 1, rb_str_new2("\n\t\t"));
+        VALUE m = rb_funcall(res, rb_intern("message"), 0);
+        backtrace = rb_funcall(backtrace, rb_intern("join"), 1, rb_str_new2("\n\t\t"));
+        m = rb_str_concat(m, rb_str_new2(" "));
+        m = rb_str_concat(m, backtrace);
         throw std::runtime_error(StringValueCStr(m));
       }
       return res;
