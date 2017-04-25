@@ -10,6 +10,9 @@
   catch (const funcaller_error &e) {
     rb_jump_tag(e.state);
   }
+  catch (const std::runtime_error &e) {
+    rb_raise(rb_eRuntimeError, "%s", e.what());
+  }
 }
 
 %{
@@ -21,6 +24,9 @@
 {
 #include <functional>
 #include <stdexcept>
+
+
+
 
   class funcaller_error {
   public:
@@ -42,27 +48,83 @@
       }
       return res;
     }
-  };
 
-  template <class R>
-    struct FunctorBase {
-    R as_impl(VALUE res) {
-      return swig::as< R >(res);
+    template<class R>
+    static R as(VALUE res) {
+      try {
+        return swig::as< R >(res, true);
+      }
+      catch (const std::invalid_argument &e) {
+        std::string s = std::string( swig::traits< R >::type_name() ) + std::string(" type expected");
+        throw std::runtime_error(s);
+      }
     }
   };
+  template<> void Funcaller::as<void>(VALUE res) {}
 
-  template<> void FunctorBase<void>::as_impl(VALUE ret) {}
+  extern "C" VALUE funcall_caller(VALUE);
+  struct Funcall {
+    Funcall(VALUE obj, ID m, std::vector<VALUE> & v) : recv(obj), mid(m), args(v) {}
+
+    VALUE call_impl() { 
+      VALUE a = rb_ary_new_from_values(args.size(), args.data());
+      return rb_apply(recv, mid, a);
+    }
+
+    VALUE call() {
+      int state = 0;
+      VALUE res = rb_protect(funcall_caller, (VALUE) this, &state);
+      if (state) {
+        throw funcaller_error(state);
+      }
+      return res;
+    }
+
+    template<class R>
+    static R as(VALUE res) {
+      try {
+        return swig::as< R >(res, true);
+      }
+      catch (const std::invalid_argument &e) {
+        std::string s = std::string( swig::traits< R >::type_name() ) + std::string(" type expected");
+        throw std::runtime_error(s);
+      }
+    }
+
+    VALUE recv;
+    ID mid;
+    std::vector<VALUE> args;
+  };
+  template<> void Funcall::as<void>(VALUE res) {}
+
+  extern "C" VALUE funcall_caller(VALUE b_proc) {
+    Funcall *f = (Funcall*) b_proc;
+    return f->call_impl();
+  }
+
+  VALUE sw_rb_funcall(VALUE recv, ID mid, int n, ...) {
+    std::vector<VALUE> v(n);
+    va_list args;
+    va_start(args, n);
+    for(int i = 0; i < n; i++) {
+      v[i] = va_arg(args, VALUE);
+    }
+    va_end(args);
+    Funcall f(recv, mid, v);
+    return f.call();
+  }
 
   template<class R, class...Args>
-    struct Functor : swig::GC_VALUE, FunctorBase<R> {
+    struct Functor : swig::GC_VALUE {
     typedef std::function<R(Args...)> function_type;
 
     Functor(VALUE obj = Qnil) : GC_VALUE(obj) {}
 
     R operator()(const Args&... args) {
-      std::function<VALUE(void)> b_proc = [&]() { return rb_funcall(_obj, rb_intern("call"), sizeof...(Args), swig::from(args)...); };
-      VALUE res = Funcaller::call(b_proc);
-      return FunctorBase<R>::as_impl(res);
+      //std::function<VALUE(void)> b_proc = [&]() { return rb_funcall(_obj, rb_intern("call"), sizeof...(Args), swig::from(args)...); };
+      //VALUE res = Funcaller::call(b_proc);
+      VALUE res = sw_rb_funcall(_obj, rb_intern("call"), sizeof...(Args), swig::from(args)...);
+      return Funcall::as<R>(res);
     }
 
     function_type to_function() {
